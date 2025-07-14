@@ -2,14 +2,31 @@
 <html>
 <head>
     <title>Register</title>
+    <style>
+        .flash-messages { color: red; margin: 10px 0; }
+        .success { color: green; }
+    </style>
 </head>
 <body>
     <h2>Register</h2>
+    
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div>{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
     <form method="post">
-        <label>Username:</label><input type="text" name="username" required><br>
-        <label>Password:</label><input type="password" name="password" required><br>
+        <label>Username:</label><input type="text" name="username" required><br><br>
+        <label>Password:</label><input type="password" name="password" required><br><br>
         <button type="submit">Register</button>
     </form>
+    <br>
     <a href="/auth/login">Already have an account? Login</a>
 </body>
 </html>
