@@ -5,6 +5,21 @@
     <style>
         .flash-messages { color: red; margin: 10px 0; }
         .success { color: green; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="email"], input[type="password"] { 
+            width: 300px; 
+            padding: 8px; 
+            margin-bottom: 10px; 
+        }
+        button { 
+            padding: 10px 20px; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+        }
+        button:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
@@ -22,8 +37,26 @@
     {% endwith %}
     
     <form method="post">
-        <label>Username:</label><input type="text" name="username" required><br><br>
-        <label>Password:</label><input type="password" name="password" required><br><br>
+        <div class="form-group">
+            <label>Username:</label>
+            <input type="text" name="username" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" name="password" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Confirm Password:</label>
+            <input type="password" name="confirm_password" required>
+        </div>
+        
         <button type="submit">Register</button>
     </form>
     <br>
