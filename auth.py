@@ -140,10 +140,17 @@ def reset_password(token):
 
 def send_reset_email(email, token):
     """Send password reset email"""
+    from flask import current_app
     try:
+        print(f"Attempting to send email to: {email}")
+        print(f"SMTP Server: {current_app.config['MAIL_SERVER']}")
+        print(f"SMTP Port: {current_app.config['MAIL_PORT']}")
+        print(f"SMTP TLS: {current_app.config.get('MAIL_USE_TLS')}")
+        print(f"SMTP SSL: {current_app.config.get('MAIL_USE_SSL')}")
+        print(f"SMTP Username: {current_app.config['MAIL_USERNAME']}")
+
         msg = Message(
-            'Password Reset Request',
-            sender='noreply@yourapp.com',
+            subject='Password Reset Request',
             recipients=[email]
         )
         
@@ -163,17 +170,25 @@ def send_reset_email(email, token):
         msg.html = f"""
         <h3>Password Reset Request</h3>
         <p>You have requested a password reset for your account.</p>
-        <p><a href="{reset_url}">Click here to reset your password</a></p>
+        <p><a href=\"{reset_url}\">Click here to reset your password</a></p>
         <p>This link will expire in 1 hour.</p>
         <p>If you did not make this request, please ignore this email.</p>
         """
         
-        mail.send(msg)
-        print(f"Password reset email sent to {email}")
+        print("Testing SMTP connection...")
+        with mail.connect() as conn:
+            print("SMTP connection successful, sending email...")
+            conn.send(msg)
+        print(f"✅ Password reset email sent successfully to {email}")
         print(f"Reset URL: {reset_url}")
-        
+        return True
     except Exception as e:
-        print(f"Error sending email: {e}")
-        # For development, print the reset URL to console
+        print(f"❌ Error sending email: {e}")
+        print(f"Error type: {type(e).__name__}")
+        # For development/fallback, always print the reset URL to console
         reset_url = url_for('auth.reset_password', token=token, _external=True)
-        print(f"Password reset URL (for development): {reset_url}")
+        print(f"\n{'='*60}")
+        print(f"PASSWORD RESET URL (copy this link):")
+        print(f"{reset_url}")
+        print(f"{'='*60}\n")
+        return False
