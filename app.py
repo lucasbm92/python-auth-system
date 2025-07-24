@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for, session
 from auth import auth_blueprint, mail
 from models import db, init_db
 import os
@@ -30,7 +30,14 @@ db.init_app(app)
 mail.init_app(app)
 init_db(app)
 
-app.register_blueprint(auth_blueprint, url_prefix='/auth')
+app.register_blueprint(auth_blueprint)
+
+@app.route('/')
+def index():
+    # Check if user is already logged in
+    if 'user_id' in session:
+        return redirect(url_for('auth.dashboard'))
+    return redirect(url_for('auth.login'))
 
 if __name__ == '__main__':
     app.run(debug=True)

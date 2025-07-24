@@ -9,8 +9,8 @@ auth_blueprint = Blueprint('auth', __name__)
 # Initialize Mail (will be configured in app.py)
 mail = Mail()
 
-@auth_blueprint.route('/register', methods=['GET', 'POST'])
-def register():
+@auth_blueprint.route('/signup', methods=['GET', 'POST'])
+def signup():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
@@ -20,33 +20,34 @@ def register():
         # Validation
         if password != confirm_password:
             flash('Passwords do not match')
-            return redirect(url_for('auth.register'))
+            return redirect(url_for('auth.signup'))
         
         if get_user_by_username(username):
             flash('Username already exists')
-            return redirect(url_for('auth.register'))
+            return redirect(url_for('auth.signup'))
         
         if get_user_by_email(email):
             flash('Email already exists')
-            return redirect(url_for('auth.register'))
+            return redirect(url_for('auth.signup'))
         
         create_user(username, email, password)
         flash('Registration successful! Please log in.')
         return redirect(url_for('auth.login'))
-    return render_template('register.html')
+    return render_template('signup.html')
 
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
-        user = get_user_by_username(username)
+        user = get_user_by_email(email)
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['username'] = user.username
+            session['email'] = user.email
             flash('Logged in successfully!')
             return redirect(url_for('auth.dashboard'))
-        flash('Invalid credentials')
+        flash('Invalid email or password')
         return redirect(url_for('auth.login'))
     return render_template('login.html')
 
